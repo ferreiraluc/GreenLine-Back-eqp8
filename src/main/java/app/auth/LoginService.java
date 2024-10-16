@@ -14,7 +14,6 @@ public class LoginService {
 
     private AuditRepository auditRepository;
 
-
     @Autowired
     private UsuarioRepository repository;
 
