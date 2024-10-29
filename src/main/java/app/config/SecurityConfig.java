@@ -1,15 +1,20 @@
 package app.config;
 
-import java.util.Arrays;
-
+import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
+import org.keycloak.adapters.springsecurity.authentication.KeycloakAuthenticationProvider;
+import org.keycloak.adapters.springsecurity.config.KeycloakWebSecurityConfigurerAdapter;
+import org.keycloak.adapters.springsecurity.filter.KeycloakAuthenticationProcessingFilter;
+import org.keycloak.adapters.springsecurity.filter.KeycloakPreAuthActionsFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
@@ -18,16 +23,32 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import org.springframework.security.web.authentication.session.NullAuthenticatedSessionStrategy;
+import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig {
+@KeycloakConfiguration
+public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
 
 	@Autowired
-	private JwtAuthenticationFilter jwtAuthFilter;
+	public void configureGlobal(AuthenticationManagerBuilder auth) {
+		auth.authenticationProvider(keycloakAuthenticationProvider());
+	}
 
-	@Autowired
-	private AuthenticationProvider authenticationProvider;
+	@Bean
+	@Override
+	protected KeycloakAuthenticationProvider keycloakAuthenticationProvider() {
+		return new KeycloakAuthenticationProvider();
+	}
+
+	@Bean
+	@Override
+	protected SessionAuthenticationStrategy sessionAuthenticationStrategy() {
+		return new NullAuthenticatedSessionStrategy();
+	}
 
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
@@ -42,7 +63,6 @@ public class SecurityConfig {
 		source.registerCorsConfiguration("/**", configuration);
 		return source;
 	}
-
 
 	@Bean
 	public FilterRegistrationBean<CorsFilter> corsFilter() {
@@ -72,10 +92,30 @@ public class SecurityConfig {
 						.requestMatchers("/api/audit-logs").permitAll()
 						.anyRequest().authenticated()
 				)
-				.authenticationProvider(authenticationProvider)
-				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+				.addFilterBefore(keycloakPreAuthActionsFilter(), UsernamePasswordAuthenticationFilter.class)
+				.addFilterBefore(keycloakAuthenticationProcessingFilter(), UsernamePasswordAuthenticationFilter.class)
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
 		return http.build();
+	}
+
+	@Bean
+	public KeycloakPreAuthActionsFilter keycloakPreAuthActionsFilter() {
+		return new KeycloakPreAuthActionsFilter();
+	}
+
+	@Bean
+	public KeycloakAuthenticationProcessingFilter keycloakAuthenticationProcessingFilter(AuthenticationManager authenticationManager) throws Exception {
+		return new KeycloakAuthenticationProcessingFilter(authenticationManager);
+	}
+
+	@Override
+	public void init(WebSecurity builder) throws Exception {
+
+	}
+
+	@Override
+	public void configure(WebSecurity builder) throws Exception {
+
 	}
 }
