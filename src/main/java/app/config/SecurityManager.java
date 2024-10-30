@@ -16,17 +16,17 @@ import app.auth.UsuarioRepository;
 
 @Configuration
 public class SecurityManager {
-	
+
 	@Autowired
 	private UsuarioRepository loginRepository;
-	
-	
+
+
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
 
-	
+
 	@Bean
 	public AuthenticationProvider authenticationProvider() {
 		DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();

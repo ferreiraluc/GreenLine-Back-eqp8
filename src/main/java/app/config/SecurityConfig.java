@@ -1,20 +1,15 @@
 package app.config;
 
-import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
-import org.keycloak.adapters.springsecurity.authentication.KeycloakAuthenticationProvider;
-import org.keycloak.adapters.springsecurity.config.KeycloakWebSecurityConfigurerAdapter;
-import org.keycloak.adapters.springsecurity.filter.KeycloakAuthenticationProcessingFilter;
-import org.keycloak.adapters.springsecurity.filter.KeycloakPreAuthActionsFilter;
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
@@ -23,32 +18,16 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
-import org.springframework.security.web.authentication.session.NullAuthenticatedSessionStrategy;
-import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
-
-import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
-@KeycloakConfiguration
-public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
+public class SecurityConfig {
 
 	@Autowired
-	public void configureGlobal(AuthenticationManagerBuilder auth) {
-		auth.authenticationProvider(keycloakAuthenticationProvider());
-	}
+	private JwtAuthenticationFilter jwtAuthFilter;
 
-	@Bean
-	@Override
-	protected KeycloakAuthenticationProvider keycloakAuthenticationProvider() {
-		return new KeycloakAuthenticationProvider();
-	}
-
-	@Bean
-	@Override
-	protected SessionAuthenticationStrategy sessionAuthenticationStrategy() {
-		return new NullAuthenticatedSessionStrategy();
-	}
+	@Autowired
+	private AuthenticationProvider authenticationProvider;
 
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
@@ -63,6 +42,7 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
 		source.registerCorsConfiguration("/**", configuration);
 		return source;
 	}
+
 
 	@Bean
 	public FilterRegistrationBean<CorsFilter> corsFilter() {
@@ -92,30 +72,10 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
 						.requestMatchers("/api/audit-logs").permitAll()
 						.anyRequest().authenticated()
 				)
-				.addFilterBefore(keycloakPreAuthActionsFilter(), UsernamePasswordAuthenticationFilter.class)
-				.addFilterBefore(keycloakAuthenticationProcessingFilter(), UsernamePasswordAuthenticationFilter.class)
+				.authenticationProvider(authenticationProvider)
+				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
 		return http.build();
-	}
-
-	@Bean
-	public KeycloakPreAuthActionsFilter keycloakPreAuthActionsFilter() {
-		return new KeycloakPreAuthActionsFilter();
-	}
-
-	@Bean
-	public KeycloakAuthenticationProcessingFilter keycloakAuthenticationProcessingFilter(AuthenticationManager authenticationManager) throws Exception {
-		return new KeycloakAuthenticationProcessingFilter(authenticationManager);
-	}
-
-	@Override
-	public void init(WebSecurity builder) throws Exception {
-
-	}
-
-	@Override
-	public void configure(WebSecurity builder) throws Exception {
-
 	}
 }
