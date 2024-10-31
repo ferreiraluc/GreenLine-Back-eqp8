@@ -25,7 +25,7 @@ import dto.MesValorDTO;
 @RestController
 @CrossOrigin(origins = "*")
 public class CarrinhoController {
-	
+
 	@Autowired
 	private CarrinhoService carrinhoService;
 
@@ -34,13 +34,13 @@ public class CarrinhoController {
 	public ResponseEntity<String> save(@RequestBody Carrinho carrinho){
 
 		try {
-			
+
 			String mensagem = this.carrinhoService.save(carrinho);
-			return new ResponseEntity<>(mensagem,HttpStatus.CREATED);	
-			
+			return new ResponseEntity<>(mensagem,HttpStatus.CREATED);
+
 		} catch (Exception e) {
 
-			return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_GATEWAY);		
+			return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_GATEWAY);
 
 		}
 
@@ -53,8 +53,8 @@ public class CarrinhoController {
 		try {
 			List<Carrinho> lista = this.carrinhoService.listAll();
 			return new ResponseEntity<>(lista, HttpStatus.OK);
-		} catch (Exception e) {			
-			return new ResponseEntity<>(null,HttpStatus.BAD_GATEWAY);		
+		} catch (Exception e) {
+			return new ResponseEntity<>(null,HttpStatus.BAD_GATEWAY);
 
 		}
 
@@ -67,128 +67,128 @@ public class CarrinhoController {
 		try {
 			Carrinho carrinho = this.carrinhoService.findById(idCarrinho);
 			return new ResponseEntity<>(carrinho, HttpStatus.OK);
-		} catch (Exception e) {			
-			return new ResponseEntity<>(null,HttpStatus.BAD_GATEWAY);		
+		} catch (Exception e) {
+			return new ResponseEntity<>(null,HttpStatus.BAD_GATEWAY);
 
 		}
 
 	}
-	
+
 	@PreAuthorize("hasRole('ADMIN')")
 	@PutMapping("/update/{idCarrinho}")
 	public ResponseEntity<String> update(@RequestBody Carrinho carrinho, @PathVariable long idCarrinho){
 
 		try {
 			String mensagem = this.carrinhoService.update(carrinho, idCarrinho);
-			return new ResponseEntity<>(mensagem,HttpStatus.OK);		
+			return new ResponseEntity<>(mensagem,HttpStatus.OK);
 		} catch (Exception e) {
 
-			return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_GATEWAY);		
+			return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_GATEWAY);
 
 		}
 
 	}
-	
+
 	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/delete/{idCarrinho}")
 	public ResponseEntity<String> delete(@PathVariable long idCarrinho){
 
 		try {
 			String mensagem = this.carrinhoService.delete(idCarrinho);
-			return new ResponseEntity<>(mensagem,HttpStatus.OK);		
+			return new ResponseEntity<>(mensagem,HttpStatus.OK);
 		} catch (Exception e) {
 
-			return new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);		
+			return new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
 
 		}
 
 	}
-	
+
 	//consultas DB
-	
+
 	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("/findByNomeProduto")
 	public ResponseEntity<List<Carrinho>> findByItemCarrinhoProdutoNomeProduto (@RequestParam String nomeProduto){
-		
+
 		try {
-			
+
 			List<Carrinho> lista = this.carrinhoService.findByItemCarrinhoProdutoNomeProduto(nomeProduto);
 			return new ResponseEntity<>(lista, HttpStatus.OK);
-			
+
 		} catch (Exception e) {
-			
+
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-			
+
 		}
-		
+
 	}
-	
+
 	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("/buscarVendaAcimaValor")
 	public ResponseEntity<List<Carrinho>> buscarVendaAcimaValor (@RequestParam double valorCarrinho){
-		
+
 		try {
-			
+
 			List<Carrinho> lista = this.carrinhoService.buscarVendaAcimaValor(valorCarrinho);
 			return new ResponseEntity<>(lista, HttpStatus.OK);
-			
+
 		} catch (Exception e) {
-			
+
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-			
+
 		}
-		
+
 	}
-	
+
 	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("/buscarVendaAbaixoValor")
 	public ResponseEntity<List<Carrinho>> buscarVendaAbaixoValor (@RequestParam double valorCarrinho){
-		
+
 		try {
-			
+
 			List<Carrinho> lista = this.carrinhoService.buscarVendaAbaixoValor(valorCarrinho);
 			return new ResponseEntity<>(lista, HttpStatus.OK);
-			
+
 		} catch (Exception e) {
-			
+
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-			
+
 		}
-		
+
 	}
-	
+
 	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("/ListVendasByMonthForLast12Months")
 	public ResponseEntity<List<MesValorDTO>> ListVendasByMonthForLast12Months (){
-		
+
 		try {
-			
+
 			List<MesValorDTO> lista = this.carrinhoService.getTotalValorCarrinhoByMonthForLast12Months();
 			return new ResponseEntity<>(lista, HttpStatus.OK);
-			
+
 		} catch (Exception e) {
-			
+
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-			
+
 		}
-		
+
 	}
-	
+
 	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("/getVendasFinalizadas")
 	public ResponseEntity<List<Carrinho>> getVendasFinalizadas (){
-		
+
 		try {
-			
+
 			List<Carrinho> lista = this.carrinhoService.getVendasFinalizadas();
 			return new ResponseEntity<>(lista, HttpStatus.OK);
-			
+
 		} catch (Exception e) {
-			
+
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-			
+
 		}
-		
+
 	}
-	
+
 }

@@ -26,7 +26,7 @@ import app.service.ItemCarrinhoService;
 @CrossOrigin(origins = "*")
 
 public class ItemCarrinhoController {
-	
+
 	@Autowired
 	private ItemCarrinhoService itemCarrinhoService;
 
@@ -35,14 +35,14 @@ public class ItemCarrinhoController {
 	public ResponseEntity<String> save(@RequestBody ItemCarrinho itemCarrinho){
 
 		try {
-			
+
 			String mensagem = this.itemCarrinhoService.save(itemCarrinho);
-			return new ResponseEntity<>(mensagem,HttpStatus.CREATED);	
-			
+			return new ResponseEntity<>(mensagem,HttpStatus.CREATED);
+
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			String erro = e.getMessage();
-			return new ResponseEntity<String>(erro,HttpStatus.BAD_REQUEST);		
+			return new ResponseEntity<String>(erro,HttpStatus.BAD_REQUEST);
 
 		}
 
@@ -54,57 +54,57 @@ public class ItemCarrinhoController {
 		try {
 			List<ItemCarrinho> lista = this.itemCarrinhoService.listAll();
 			return new ResponseEntity<>(lista, HttpStatus.CREATED);
-		} catch (Exception e) {			
-			return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);		
+		} catch (Exception e) {
+			return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
 
 		}
 
 	}
 
-	
+
 	@GetMapping("/findById/{idItem}")
 	public ResponseEntity <ItemCarrinho> findById(@PathVariable long idItem){
 
 		try {
 			ItemCarrinho itemCarrinho = this.itemCarrinhoService.findById(idItem);
 			return new ResponseEntity<>(itemCarrinho, HttpStatus.CREATED);
-		} catch (Exception e) {			
-			return new ResponseEntity<>(null,HttpStatus.BAD_GATEWAY);		
+		} catch (Exception e) {
+			return new ResponseEntity<>(null,HttpStatus.BAD_GATEWAY);
 
 		}
 
 	}
-	
+
 	@PreAuthorize("hasRole('ADMIN') || hasRole('USER')")
 	@PutMapping("/update/{idItem}")
 	public ResponseEntity<String> update(@RequestBody ItemCarrinho itemCarrinho, @PathVariable long idItem){
 
 		try {
 			String mensagem = this.itemCarrinhoService.update(itemCarrinho, idItem);
-			return new ResponseEntity<>(mensagem,HttpStatus.OK);		
+			return new ResponseEntity<>(mensagem,HttpStatus.OK);
 		} catch (Exception e) {
 
-			return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_GATEWAY);		
+			return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_GATEWAY);
 
 		}
 
 	}
-	
+
 	@PreAuthorize("hasRole('ADMIN') || hasRole('USER')")
 	@DeleteMapping("/delete/{idItem}")
 	public ResponseEntity<String> delete(@PathVariable long idItem){
 
 		try {
 			String mensagem = this.itemCarrinhoService.delete(idItem);
-			return new ResponseEntity<>(mensagem,HttpStatus.OK);		
+			return new ResponseEntity<>(mensagem,HttpStatus.OK);
 		} catch (Exception e) {
 
-			return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);		
+			return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
 
 		}
 
 	}
-	
+
 	@PreAuthorize("hasRole('ADMIN') || hasRole('USER')")
 	@GetMapping("/getCarrinhoByUser")
 	public ResponseEntity <Carrinho> getCarrinhoByUser(@RequestParam long idUsuario){
@@ -112,9 +112,9 @@ public class ItemCarrinhoController {
 			Carrinho carrinho = this.itemCarrinhoService.getCarrinhoByUser(idUsuario);
 			return new ResponseEntity<>(carrinho, HttpStatus.CREATED);
 		} catch (Exception e) {
-			return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);		
+			return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
 		}
 
 	}
-	
+
 }

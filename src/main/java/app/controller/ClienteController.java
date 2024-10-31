@@ -30,22 +30,22 @@ public class ClienteController {
 
 	@Autowired
 	private ClienteService clienteService;
-	
+
 	@PreAuthorize("hasRole('ADMIN') || hasRole('USER')")
 	@PostMapping("/save")
 	public ResponseEntity<String> save(@RequestBody Cliente cliente){
 
 		try {
-			
+
 			String mensagem = this.clienteService.save(cliente);
-			return new ResponseEntity<>(mensagem,HttpStatus.OK);	
-			
+			return new ResponseEntity<>(mensagem,HttpStatus.OK);
+
 		} catch (Exception e) {
-			
+
 			System.out.println(e.getMessage());
 			e.printStackTrace();
 
-			return new ResponseEntity<>(null,HttpStatus.BAD_GATEWAY);		
+			return new ResponseEntity<>(null,HttpStatus.BAD_GATEWAY);
 
 		}
 
@@ -58,70 +58,70 @@ public class ClienteController {
 		try {
 			List<Cliente> lista = this.clienteService.findAll();
 			return new ResponseEntity<>(lista, HttpStatus.CREATED);
-		} catch (Exception e) {			
-			return new ResponseEntity<>(null,HttpStatus.BAD_GATEWAY);		
+		} catch (Exception e) {
+			return new ResponseEntity<>(null,HttpStatus.BAD_GATEWAY);
 
 		}
 
 	}
 
-	
+
 	@GetMapping("/findById/{idCliente}")
 	public ResponseEntity <Cliente> findById(@PathVariable long idCliente){
 
 		try {
 			Cliente cliente = this.clienteService.findById(idCliente);
 			return new ResponseEntity<>(cliente, HttpStatus.CREATED);
-		} catch (Exception e) {			
-			return new ResponseEntity<>(null,HttpStatus.BAD_GATEWAY);		
+		} catch (Exception e) {
+			return new ResponseEntity<>(null,HttpStatus.BAD_GATEWAY);
 
 		}
 
 	}
-	
+
 	@GetMapping("/findByUsuarioId/{idUsuario}")
 	public ResponseEntity <Cliente> findByUsuarioId(@PathVariable long idUsuario){
 
 		try {
 			Cliente cliente = this.clienteService.findByUsuarioId(idUsuario);
 			return new ResponseEntity<>(cliente, HttpStatus.CREATED);
-		} catch (Exception e) {			
+		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			e.printStackTrace();
-			return new ResponseEntity<>(null,HttpStatus.BAD_GATEWAY);		
+			return new ResponseEntity<>(null,HttpStatus.BAD_GATEWAY);
 
 		}
 
 	}
-	
+
 	@PreAuthorize("hasRole('ADMIN') || hasRole('USER')")
-	@PutMapping("/update/{idCliente}") 
+	@PutMapping("/update/{idCliente}")
 	public ResponseEntity<String> update(@Valid @RequestBody Cliente cliente, @PathVariable long idCliente){
 
 		try {
 			String mensagem = this.clienteService.update(cliente, idCliente);
-			return new ResponseEntity<>(mensagem,HttpStatus.OK);		
+			return new ResponseEntity<>(mensagem,HttpStatus.OK);
 		} catch (Exception e) {
 
-			return new ResponseEntity<>(null,HttpStatus.BAD_GATEWAY);		
+			return new ResponseEntity<>(null,HttpStatus.BAD_GATEWAY);
 
 		}
 
 	}
-	
+
 	@PreAuthorize("hasRole('ADMIN') || hasRole('USER')")
 	@DeleteMapping("/delete/{idCliente}")
 	public ResponseEntity<String> update(@PathVariable long idCliente){
 
 		try {
 			String mensagem = this.clienteService.delete(idCliente);
-			return new ResponseEntity<>(mensagem,HttpStatus.OK);		
+			return new ResponseEntity<>(mensagem,HttpStatus.OK);
 		} catch (Exception e) {
 
-			return new ResponseEntity<>(null,HttpStatus.BAD_GATEWAY);		
+			return new ResponseEntity<>(null,HttpStatus.BAD_GATEWAY);
 
 		}
 
 	}
-	
+
 }

@@ -28,90 +28,90 @@ import jakarta.validation.Valid;
 @CrossOrigin(origins = "*")
 
 public class CategoriaController {
-	
+
 	@Autowired
 	private CategoriaService categoriaService;
-	
+
 	@PreAuthorize("hasRole('ADMIN')")
-	@PostMapping("/save") 
-	public ResponseEntity<String> save(@Valid @RequestBody Categoria categoria) 
+	@PostMapping("/save")
+	public ResponseEntity<String> save(@Valid @RequestBody Categoria categoria)
 	{
-		try { 
+		try {
 			String mensagem = this.categoriaService.save(categoria);
-			return new ResponseEntity<>(mensagem, HttpStatus.CREATED); 
+			return new ResponseEntity<>(mensagem, HttpStatus.CREATED);
 		} catch (Exception e) { //Se acontecer algum erro
-			
+
 			return new ResponseEntity<String>("Ocorreu o seguinte erro1"+e.getMessage(),HttpStatus.BAD_REQUEST);
-			
+
 		}
 	}
-	
+
 	@PreAuthorize("hasRole('ADMIN')")
 	@PutMapping("/update/{idCategoria}")
 	public ResponseEntity<String> update(@Valid @RequestBody Categoria categoria, @PathVariable long idCategoria){
 		try {
 			String mensagem = this.categoriaService.update(idCategoria, categoria);
-			 return new ResponseEntity<String>(mensagem, HttpStatus.OK);
-			
+			return new ResponseEntity<String>(mensagem, HttpStatus.OK);
+
 		} catch (Exception e) {
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	@GetMapping("/listAll")
 	public ResponseEntity<List<Categoria>> listAll (){
-		
+
 		try {
-			
+
 			List<Categoria> lista = this.categoriaService.listAll();
 			return new ResponseEntity<>(lista, HttpStatus.OK);
-			
+
 		} catch (Exception e) {
-			
+
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 
 		}
-		
+
 	}
-	
-	
+
+
 	@GetMapping("/findById/{idCategoria}")
 	public ResponseEntity<Categoria> findById(@PathVariable long idCategoria){
-		
+
 		try {
-			
+
 			Categoria categoria = this.categoriaService.findById(idCategoria);
 			return new ResponseEntity<>(categoria, HttpStatus.OK);
-			
+
 		} catch (Exception e) {
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 		}
-		
+
 	}
-	
+
 	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/delete/{idCategoria}")
 	public ResponseEntity<String> delete(@PathVariable long idCategoria){
 		try {
-			
+
 			String mensagem = this.categoriaService.delete(idCategoria);
 			return new ResponseEntity<>(mensagem, HttpStatus.OK);
-			
+
 		} catch (Exception e) {
 			return new ResponseEntity<String>("Ocorreu o seguinte erro: "+e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 	}
-	
-	 @GetMapping("/findByDescricao")
-     public ResponseEntity<List<Categoria>> findByDescricao (@RequestParam String descricao){
 
-         try {
+	@GetMapping("/findByDescricao")
+	public ResponseEntity<List<Categoria>> findByDescricao (@RequestParam String descricao){
 
-             List<Categoria> lista = this.categoriaService.findByDescricao(descricao);
-             return new ResponseEntity<>(lista, HttpStatus.OK);
+		try {
 
-         } catch (Exception e) {
-             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-         }
-     }
+			List<Categoria> lista = this.categoriaService.findByDescricao(descricao);
+			return new ResponseEntity<>(lista, HttpStatus.OK);
+
+		} catch (Exception e) {
+			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+		}
+	}
 }

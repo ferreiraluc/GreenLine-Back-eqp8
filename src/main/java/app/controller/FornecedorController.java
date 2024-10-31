@@ -30,97 +30,97 @@ import jakarta.validation.Valid;
 public class FornecedorController {
 
 
-        @Autowired
-        private FornecedorService fornecedorService;
+    @Autowired
+    private FornecedorService fornecedorService;
 
-        @PreAuthorize("hasRole('ADMIN')")
-        @PostMapping("/save")
-        public ResponseEntity<String> save(@Valid @RequestBody Fornecedor fornecedor) {
-    	
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/save")
+    public ResponseEntity<String> save(@Valid @RequestBody Fornecedor fornecedor) {
 
-            try {
 
-                String mensagem = this.fornecedorService.save(fornecedor);
-                return new ResponseEntity<String>(mensagem, HttpStatus.CREATED);//Se acontecer algum erro
+        try {
 
-            } catch (Exception e) {
+            String mensagem = this.fornecedorService.save(fornecedor);
+            return new ResponseEntity<String>(mensagem, HttpStatus.CREATED);//Se acontecer algum erro
 
-                return new ResponseEntity<String>("Ocorreu o seguinte erro:"+e.getMessage(),HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
 
-            }
-        }
-
-        @PreAuthorize("hasRole('ADMIN')")
-        @PutMapping("/update/{idFornecedor}")
-        public ResponseEntity<String> update(@RequestBody Fornecedor fornecedor, @PathVariable long idFornecedor) {
-            try {
-                String mensagem = this.fornecedorService.update(idFornecedor, fornecedor);
-                return new ResponseEntity<String>(mensagem, HttpStatus.OK);
-            } catch (Exception e) {
-                return new ResponseEntity<String>("Ocorreu o seguinte erro: " + e.getMessage(), HttpStatus.BAD_REQUEST);
-            }
-        }
-        
-        @PreAuthorize("hasRole('ADMIN')")
-        @GetMapping("/listAll")
-        public ResponseEntity<List<Fornecedor>> listAll (){
-
-            try {
-
-                List<Fornecedor> lista = this.fornecedorService.listAll();
-                return new ResponseEntity<>(lista, HttpStatus.OK);
-
-            } catch (Exception e) {
-
-                return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-
-            }
+            return new ResponseEntity<String>("Ocorreu o seguinte erro:"+e.getMessage(),HttpStatus.BAD_REQUEST);
 
         }
+    }
 
-        @PreAuthorize("hasRole('ADMIN')")
-        @GetMapping("/findById/{idFornecedor}")
-        public ResponseEntity<Fornecedor> findById(@PathVariable long idFornecedor){
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/update/{idFornecedor}")
+    public ResponseEntity<String> update(@RequestBody Fornecedor fornecedor, @PathVariable long idFornecedor) {
+        try {
+            String mensagem = this.fornecedorService.update(idFornecedor, fornecedor);
+            return new ResponseEntity<String>(mensagem, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<String>("Ocorreu o seguinte erro: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
 
-            try {
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/listAll")
+    public ResponseEntity<List<Fornecedor>> listAll (){
 
-                Fornecedor fornecedor = this.fornecedorService.findById(idFornecedor);
-                return new ResponseEntity<>(fornecedor, HttpStatus.OK);
+        try {
 
-            } catch (Exception e) {
-                return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-            }
+            List<Fornecedor> lista = this.fornecedorService.listAll();
+            return new ResponseEntity<>(lista, HttpStatus.OK);
+
+        } catch (Exception e) {
+
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 
         }
 
-        @PreAuthorize("hasRole('ADMIN')")
-        @DeleteMapping("/delete/{idFornecedor}")
-        public ResponseEntity<String> delete(@PathVariable long idFornecedor){
+    }
 
-            try {
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/findById/{idFornecedor}")
+    public ResponseEntity<Fornecedor> findById(@PathVariable long idFornecedor){
 
-                String mensagem = this.fornecedorService.delete(idFornecedor);
-                return new ResponseEntity<>(mensagem, HttpStatus.OK);
+        try {
 
-            } catch (Exception e) {
-                return new ResponseEntity<String>("Ocorreu o seguinte erro: "+e.getMessage(), HttpStatus.BAD_REQUEST);
-            }
+            Fornecedor fornecedor = this.fornecedorService.findById(idFornecedor);
+            return new ResponseEntity<>(fornecedor, HttpStatus.OK);
+
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
 
-        //-------
+    }
 
-        @PreAuthorize("hasRole('ADMIN') || hasRole('USER')")
-        @GetMapping("/findByNomeFornecedor")
-        public ResponseEntity<List<Fornecedor>> findByNomeFornecedor (@RequestParam String nomeFornecedor){
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/delete/{idFornecedor}")
+    public ResponseEntity<String> delete(@PathVariable long idFornecedor){
 
-            try {
+        try {
 
-                List<Fornecedor> lista = this.fornecedorService.findByNomeFornecedor(nomeFornecedor);
-                return new ResponseEntity<>(lista, HttpStatus.OK);
+            String mensagem = this.fornecedorService.delete(idFornecedor);
+            return new ResponseEntity<>(mensagem, HttpStatus.OK);
 
-            } catch (Exception e) {
-                return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-            }
+        } catch (Exception e) {
+            return new ResponseEntity<String>("Ocorreu o seguinte erro: "+e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-     
+    }
+
+    //-------
+
+    @PreAuthorize("hasRole('ADMIN') || hasRole('USER')")
+    @GetMapping("/findByNomeFornecedor")
+    public ResponseEntity<List<Fornecedor>> findByNomeFornecedor (@RequestParam String nomeFornecedor){
+
+        try {
+
+            List<Fornecedor> lista = this.fornecedorService.findByNomeFornecedor(nomeFornecedor);
+            return new ResponseEntity<>(lista, HttpStatus.OK);
+
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }
