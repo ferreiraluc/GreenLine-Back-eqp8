@@ -24,97 +24,81 @@ import app.service.ItemCarrinhoService;
 @RequestMapping("/api/itemcarrinho")
 @RestController
 @CrossOrigin(origins = "*")
-
 public class ItemCarrinhoController {
 
 	@Autowired
 	private ItemCarrinhoService itemCarrinhoService;
 
-	@PreAuthorize("hasRole('ADMIN') || hasRole('USER')")
+	@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
 	@PostMapping("/save")
-	public ResponseEntity<String> save(@RequestBody ItemCarrinho itemCarrinho){
-
+	public ResponseEntity<String> save(@RequestBody ItemCarrinho itemCarrinho) {
 		try {
+			// Garante que o carrinho associado ao item está salvo
+			if (itemCarrinho.getCarrinho() == null) {
+				return new ResponseEntity<>("Carrinho não associado ao item", HttpStatus.BAD_REQUEST);
+			}
 
 			String mensagem = this.itemCarrinhoService.save(itemCarrinho);
-			return new ResponseEntity<>(mensagem,HttpStatus.CREATED);
+			return new ResponseEntity<>(mensagem, HttpStatus.CREATED);
 
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
-			String erro = e.getMessage();
-			return new ResponseEntity<String>(erro,HttpStatus.BAD_REQUEST);
-
+			return new ResponseEntity<>("Erro ao salvar item no carrinho: " + e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
-
 	}
-	@PreAuthorize("hasAnyRole('ADMIN','USER')")
-	@GetMapping("/listAll")
-	public ResponseEntity <List<ItemCarrinho>> listAll(){
 
+	@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+	@GetMapping("/listAll")
+	public ResponseEntity<List<ItemCarrinho>> listAll() {
 		try {
 			List<ItemCarrinho> lista = this.itemCarrinhoService.listAll();
-			return new ResponseEntity<>(lista, HttpStatus.CREATED);
+			return new ResponseEntity<>(lista, HttpStatus.OK);
 		} catch (Exception e) {
-			return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
-
+			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 		}
-
 	}
 
-
+	@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
 	@GetMapping("/findById/{idItem}")
-	public ResponseEntity <ItemCarrinho> findById(@PathVariable long idItem){
-
+	public ResponseEntity<ItemCarrinho> findById(@PathVariable long idItem) {
 		try {
 			ItemCarrinho itemCarrinho = this.itemCarrinhoService.findById(idItem);
-			return new ResponseEntity<>(itemCarrinho, HttpStatus.CREATED);
+			return new ResponseEntity<>(itemCarrinho, HttpStatus.OK);
 		} catch (Exception e) {
-			return new ResponseEntity<>(null,HttpStatus.BAD_GATEWAY);
-
+			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 		}
-
 	}
 
-	@PreAuthorize("hasRole('ADMIN') || hasRole('USER')")
+	@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
 	@PutMapping("/update/{idItem}")
-	public ResponseEntity<String> update(@RequestBody ItemCarrinho itemCarrinho, @PathVariable long idItem){
-
+	public ResponseEntity<String> update(@RequestBody ItemCarrinho itemCarrinho, @PathVariable long idItem) {
 		try {
 			String mensagem = this.itemCarrinhoService.update(itemCarrinho, idItem);
-			return new ResponseEntity<>(mensagem,HttpStatus.OK);
+			return new ResponseEntity<>(mensagem, HttpStatus.OK);
 		} catch (Exception e) {
-
-			return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_GATEWAY);
-
+			return new ResponseEntity<>("Erro ao atualizar item: " + e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
-
 	}
 
-	@PreAuthorize("hasRole('ADMIN') || hasRole('USER')")
+	@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
 	@DeleteMapping("/delete/{idItem}")
-	public ResponseEntity<String> delete(@PathVariable long idItem){
-
+	public ResponseEntity<String> delete(@PathVariable long idItem) {
 		try {
 			String mensagem = this.itemCarrinhoService.delete(idItem);
-			return new ResponseEntity<>(mensagem,HttpStatus.OK);
+			return new ResponseEntity<>(mensagem, HttpStatus.OK);
 		} catch (Exception e) {
-
-			return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
-
+			return new ResponseEntity<>("Erro ao deletar item: " + e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
-
 	}
 
-	@PreAuthorize("hasRole('ADMIN') || hasRole('USER')")
+	@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
 	@GetMapping("/getCarrinhoByUser")
-	public ResponseEntity <Carrinho> getCarrinhoByUser(@RequestParam long idUsuario){
+	public ResponseEntity<Carrinho> getCarrinhoByUser(@RequestParam long idUsuario) {
 		try {
 			Carrinho carrinho = this.itemCarrinhoService.getCarrinhoByUser(idUsuario);
-			return new ResponseEntity<>(carrinho, HttpStatus.CREATED);
+			return new ResponseEntity<>(carrinho, HttpStatus.OK);
 		} catch (Exception e) {
-			return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 		}
-
 	}
-
 }

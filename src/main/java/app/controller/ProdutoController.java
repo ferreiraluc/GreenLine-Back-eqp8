@@ -11,19 +11,17 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import app.entity.Produto;
 import app.service.ProdutoService;
-import org.springframework.web.bind.annotation.PutMapping;
-
 
 @RequestMapping("/api/produto")
 @RestController
 @CrossOrigin(origins = "*")
-
 public class ProdutoController {
 
 	@Autowired
@@ -33,12 +31,10 @@ public class ProdutoController {
 	@PostMapping("/save")
 	public ResponseEntity<String> save(@RequestBody Produto produto) {
 		try {
-
 			String mensagem = produtoService.save(produto);
-			return new ResponseEntity<String>(mensagem, HttpStatus.CREATED);
-
+			return new ResponseEntity<>(mensagem, HttpStatus.CREATED);
 		} catch (Exception e) {
-			return new ResponseEntity<String>(e.getMessage() + " Ocorreu um erro!", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("Erro ao salvar produto: " + e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -52,46 +48,35 @@ public class ProdutoController {
 		}
 	}
 
-
 	@GetMapping("/findById/{idProduto}")
 	public ResponseEntity<Produto> findById(@PathVariable long idProduto) {
 		try {
-
-			Produto produto= produtoService.findById(idProduto);
-			return new ResponseEntity<>(produto, HttpStatus.CREATED);
-
+			Produto produto = produtoService.findById(idProduto);
+			return new ResponseEntity<>(produto, HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
 
-	@PreAuthorize("hasRole ('ADMIN')")
-	@PutMapping("update/{idProduto}")
+	@PreAuthorize("hasRole('ADMIN')")
+	@PutMapping("/update/{idProduto}")
 	public ResponseEntity<String> update(@PathVariable Long idProduto, @RequestBody Produto produto) {
-
 		try {
-
 			String mensagem = produtoService.update(idProduto, produto);
-			return new ResponseEntity<String>(mensagem, HttpStatus.ACCEPTED);
-
+			return new ResponseEntity<>(mensagem, HttpStatus.ACCEPTED);
 		} catch (Exception e) {
-			return new ResponseEntity<>("Deu Ruim", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("Erro ao atualizar produto: " + e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
-
 	}
 
-	@PreAuthorize("hasRole ('ADMIN')")
-	@DeleteMapping("delete/{idProduto}")
+	@PreAuthorize("hasRole('ADMIN')")
+	@DeleteMapping("/delete/{idProduto}")
 	public ResponseEntity<String> delete(@PathVariable Long idProduto) {
-
 		try {
-
 			String mensagem = produtoService.delete(idProduto);
-			return new ResponseEntity<String>(mensagem, HttpStatus.ACCEPTED);
-
+			return new ResponseEntity<>(mensagem, HttpStatus.ACCEPTED);
 		} catch (Exception e) {
-			return new ResponseEntity<>("Deu Ruim", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("Erro ao deletar produto: " + e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
-
 	}
 }
